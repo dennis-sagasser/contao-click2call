@@ -1,0 +1,55 @@
+<!-- indexer::stop -->
+<div class="<?php echo $this->class; ?> block"<?php echo $this->cssID; ?><?php if ($this->style): ?> style="<?php echo $this->style; ?>"<?php endif; ?>>
+<?php if ($this->headline): ?>
+
+<<?php echo $this->hl; ?>><?php echo $this->headline; ?></<?php echo $this->hl; ?>>
+<?php endif; ?>
+<?php if (!$this->addBefore): ?>
+
+<?php echo $this->teaser; ?>
+<?php endif; ?>
+<?php if ($this->addImage): ?>
+
+<div class="image_container<?php echo $this->floatClass; ?>"<?php if ($this->margin || $this->float): ?> style="<?php echo trim($this->margin . $this->float); ?>"<?php endif; ?>>
+<?php if ($this->href): ?>
+<a href="<?php echo $this->href; ?>"<?php if ($this->linkTitle): ?> title="<?php echo $this->linkTitle; ?>"<?php endif; ?><?php echo $this->attributes; ?>>
+<?php endif; ?>
+<img src="<?php echo $this->src; ?>"<?php echo $this->imgSize; ?> alt="<?php echo $this->alt; ?>"<?php if ($this->title): ?> title="<?php echo $this->title; ?>"<?php endif; ?> />
+<?php if ($this->href): ?>
+</a>
+<?php endif; ?>
+<?php if ($this->caption): ?>
+<div class="caption" style="width:<?php echo $this->arrSize[0]; ?>px"><?php echo $this->caption; ?></div>
+<?php endif; ?>
+</div>
+<?php endif; ?>
+<?php if ($this->addBefore): ?>
+
+<?php echo $this->teaser; ?>
+<?php endif; ?>
+<div id="clear"></div><br />
+
+<?php if ($this->infoClass || $this->infoMessage): ?>	
+<div class="<?php echo $this->infoClass ?>"><?php echo $this->infoMessage ?></div><br />
+<?php endif; ?>
+
+<form action="<?php echo $this->action; ?>" id="click2call" method="post" enctype="application/x-www-form-urlencoded">
+<div class="formbody">
+<input type="hidden" name="FORM_SUBMIT" value="form_click2call_submit" />
+<input type="hidden" name="REQUEST_TOKEN" value="{{request_token}}" />	
+<?php echo $this->objWidgetName->generateLabel(); ?>
+<?php echo $this->objWidgetName->generateWithError(); ?><br />
+
+<?php echo $this->objWidgetNumber->generateLabel(); ?>
+<?php echo $this->objWidgetNumber->generateWithError(); ?><br /> 
+
+<?php echo $this->objWidgetCaptcha->generateWithError(); ?> 
+<?php echo $this->objWidgetCaptcha->generateQuestion(); ?><br /><br />
+
+<?php echo $this->objWidgetSubmit->generate(); ?>
+
+</div>
+</form>
+
+</div>
+<!-- indexer::continue -->
