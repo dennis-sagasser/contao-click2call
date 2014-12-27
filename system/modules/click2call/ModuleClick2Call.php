@@ -115,14 +115,14 @@ class ModuleClick2Call extends Module
 		// Get Click2Call configuration 
 		$arrModuleParams = $this->Database->prepare("	SELECT * FROM tl_click2call WHERE id=?") ->limit(1) ->execute($this->foreignKey); 
 									   
-		$strHost 		= $arrModuleParams->host; 
-		$strUser 		= $arrModuleParams->user; 
+		$strHost 	= $arrModuleParams->host; 
+		$strUser 	= $arrModuleParams->user; 
 		$strPassword 	= $arrModuleParams->password; 
 		$strChannel 	= $arrModuleParams->channel; 
-		$intPort 		= $arrModuleParams->port;
+		$intPort 	= $arrModuleParams->port;
 		$strContext 	= $arrModuleParams->context; 
 		$intWaitTime 	= $arrModuleParams->wait_time;  
-        $intPriority 	= $arrModuleParams->priority;
+                $intPriority 	= $arrModuleParams->priority;
 		
 		$strWeekDay = date("D", time());
 		$strStart = strtolower($strWeekDay)."_start";
