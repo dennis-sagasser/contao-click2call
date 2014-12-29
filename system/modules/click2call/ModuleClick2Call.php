@@ -31,180 +31,179 @@
 /**
  * Class ModuleClick2Call 
  *
- * @copyright  Dennis Sagasser 2013 
- * @author     Dennis Sagasser <sagasser@gispack.com> 
- * @package    Controller
+ * Generates and validates the frontend form.
+ * 
+ * @category  Contao  
+ * @package   CallbackSevice                                                                                                                                                                                                                                                                                                                                                                                                               
+ * @author    Dennis Sagasser <sagasser@gispack.com>
+ * @copyright 2013-2014 Dennis Sagasser                                                                                                                                                                                                      
+ * @license   http://www.gnu.org/licenses/lgpl-3.0.html LGPL
+ * @link      https://contao.org            
  */
 class ModuleClick2Call extends Module
 {
 
-	/**
-	 * Template
-	 * @var string
-	 */
-	protected $strTemplate = 'mod_click2call_form';
+    /**
+     * Template
+     * 
+     * @var string
+     */
+    protected $strTemplate = 'mod_click2call_form';
 
 
-	/**
-	 * Redirect to the selected page
-	 * @return string
-	 */
-	public function generate()
-	{
-		return parent::generate();
-	}
+    /**
+     * Redirect to the selected page
+     * 
+     * @return string
+     */
+    public function generate()
+    {
+            return parent::generate();
+    }
 
-	/**
-	 * Generate module
-	 */
-	protected function compile()
-	{
-		$this->loadLanguageFile('tl_click2call');
-		
-		$this->Template->teaser = $this->teaser;
-		
-		// Add image
-		if ($this->addLogo && strlen($this->singleSRC) && is_file(TL_ROOT . '/' . $this->singleSRC))
-		{
-			$arrItem = array(
-				'singleSRC'		=> $this->singleSRC,
-				'alt'		    => $this->logoAlt,
-				'title'		    => $this->logoTitle,
-				'imagemargin'   => $this->logoMargin,
-				'floating'		=> $this->logoFloating,
-				'caption'		=> $this->logoCaption,
-				'imageUrl'		=> $this->logoUrl,
-				'size'			=> $this->logoSize,
-				'fullsize'		=> $this->fullsize
-			);
-			
-			$this->addImageToTemplate($this->Template, $arrItem);
-		}
-		// Initialize form fields
-		$objWidgetName = new FormTextField();
-		$objWidgetName->id = 'name';
-		$objWidgetName->label = $GLOBALS['TL_LANG']['MSC']['strFormName'];
-		$objWidgetName->name = 'name';
-		$objWidgetName->mandatory = true;
-		$objWidgetName->rgxp = 'alpha';
-		$objWidgetName->value = $this->Input->post('name');
-		
-		$this->Template->objWidgetName = $objWidgetName;
-		
-		$objWidgetNumber = new FormTextField();
-		$objWidgetNumber->id = 'number';
-		$objWidgetNumber->label = $GLOBALS['TL_LANG']['MSC']['strFormNumber'];
-		$objWidgetNumber->name = 'number';
-		$objWidgetNumber->mandatory = true;
-		$objWidgetNumber->rgxp = 'germanNumbers';
-		$objWidgetNumber->value = $this->Input->post('number');
-		
-		$this->Template->objWidgetNumber = $objWidgetNumber;
-		
-		$objWidgetCaptcha = new FormCaptcha();
-		
-		$this->Template->objWidgetCaptcha = $objWidgetCaptcha;
-		
-		$objWidgetSubmit = new FormSubmit();
-		$objWidgetSubmit->id = 'submit';
-		$objWidgetSubmit->slabel = $GLOBALS['TL_LANG']['MSC']['strFormSubmit'];
-		
-		$this->Template->objWidgetSubmit = $objWidgetSubmit;
-		
-		// Get Click2Call configuration 
-		$arrModuleParams = $this->Database->prepare("	SELECT * FROM tl_click2call WHERE id=?") ->limit(1) ->execute($this->foreignKey); 
-									   
-		$strHost 	= $arrModuleParams->host; 
-		$strUser 	= $arrModuleParams->user; 
-		$strPassword 	= $arrModuleParams->password; 
-		$strChannel 	= $arrModuleParams->channel; 
-		$intPort 	= $arrModuleParams->port;
-		$strContext 	= $arrModuleParams->context; 
-		$intWaitTime 	= $arrModuleParams->wait_time;  
-                $intPriority 	= $arrModuleParams->priority;
-		
-		$strWeekDay = date("D", time());
-		$strStart = strtolower($strWeekDay)."_start";
-		$strEnd = strtolower($strWeekDay)."_stop";
-		
-		if ($this->Input->post('FORM_SUBMIT') == 'form_click2call_submit') 
-		{
-			$boolOfficeIsOpen = false;
+    /**
+     * Generate module
+     * 
+     * @return null
+     */
+    protected function compile()
+    {
+        $this->loadLanguageFile('tl_click2call');
 
-			if ($arrModuleParams->show_office_hours == '1')
-			{				
-				$intStartTime = $arrModuleParams->{$strStart};
-				$intEndTime = $arrModuleParams->{$strEnd};
-				
-				($intStartTime == NULL) ? $intStartTime = '0' : $intStartTime;
-				($intEndTime == NULL || $intEndTime == 0) ? $intEndTime = '86340' : $intEndTime;
+        $this->Template->teaser = $this->teaser;
 
-				$intNow = strtotime("now") + 3600;				
-				$intStartOfTheDay = strtotime("today");
-				$intDifference = $intNow - $intStartOfTheDay;
-				
-				if (($intDifference  > $intStartTime)  && ($intDifference < $intEndTime))
-				{
-					$boolOfficeIsOpen = true;
-				}				
-			}
-			else
-			{
-				$boolOfficeIsOpen = true;
-			}
+        // Add image
+        if ($this->addLogo && strlen($this->singleSRC) && is_file(TL_ROOT . '/' . $this->singleSRC)) {
+            $arrItem = array(
+                'singleSRC'	=> $this->singleSRC,
+                'alt'		=> $this->logoAlt,
+                'title'		=> $this->logoTitle,
+                'imagemargin'   => $this->logoMargin,
+                'floating'	=> $this->logoFloating,
+                'caption'	=> $this->logoCaption,
+                'imageUrl'	=> $this->logoUrl,
+                'size'		=> $this->logoSize,
+                'fullsize'	=> $this->fullsize
+            );
 
-			if ($boolOfficeIsOpen)
-			{
-				$objWidgetName->validate(); 
-				$objWidgetNumber->validate();
-				$objWidgetCaptcha->validate();
-				
-				if (!$objWidgetName->hasErrors() && !$objWidgetNumber->hasErrors() && !$objWidgetCaptcha->hasErrors())
-				{
-					// if no error occurs and office is open then initialize callback
-					$callerName  = $this->Input->post('name');
-	                $callNumber = $this->Input->post('number');
-					
-	                $callerId = "Web-".$callerName . " <".$callNumber.">";
-					
-					$objSocket = fsockopen($strHost, $intPort, $errnum, $errdesc);
-					if ($objSocket) 
-					{
-		                fputs($objSocket, "Action: login\r\n");
-		                fputs($objSocket, "Events: off\r\n");
-		                fputs($objSocket, "Username: ".$strUser."\r\n");
-		                fputs($objSocket, "Secret: ".$strPassword."\r\n\r\n");
-		                fputs($objSocket, "Action: originate\r\n");
-		                fputs($objSocket, "Channel: ".$strChannel."\r\n");
-		                fputs($objSocket, "WaitTime: ".$intWaitTime."\r\n");
-		                fputs($objSocket, "CallerId: ".$callerId."\r\n");
-		                fputs($objSocket, "Exten: ".$callNumber."\r\n");
-		                fputs($objSocket, "Context: ".$strContext."\r\n");
-		                fputs($objSocket, "Priority: ".$intPriority."\r\n\r\n");
-		                fputs($objSocket, "Action: Logoff\r\n\r\n");
-		                sleep(3);
-		                fclose($objSocket);
-						
-						$this->Template->infoClass = 'infoBox';
-						$this->Template->infoMessage = $GLOBALS['TL_LANG']['MSC']['strFormSuccess'];
-						$this->log('Connection established between "'.$strHost.'" and "'.$callerName . " <".$callNumber.">".'".', 'ModuleClick2Call fsockopen()', TL_GENERAL);	
-					}
-					else 
-					{
-						$this->Template->infoClass = 'errorBox';
-						$this->Template->infoMessage = sprintf($GLOBALS['TL_LANG']['MSC']['strFormConnection'], $errdesc, $errnum ? '(#'.$errnum.')' : '');	
-						$this->log(($errdesc && $errnum) ? $errdesc.' by '.$strHost.' (#'.$errnum.')' : 'Connection failed', 'ModuleClick2Call fsockopen()', TL_ERROR);			
-					}
-	               
-				}	
-			}
-			else
-			{
-				$this->Template->infoClass = 'errorBox';
-				$this->Template->infoMessage = $GLOBALS['TL_LANG']['MSC']['strFormOffice'];							 
-			}
-		}
-	}
+            $this->addImageToTemplate($this->Template, $arrItem);
+        }
+        
+        // Initialize form fields
+        $objWidgetName            = new FormTextField();
+        $objWidgetName->id        = 'name';
+        $objWidgetName->label     = $GLOBALS['TL_LANG']['MSC']['strFormName'];
+        $objWidgetName->name      = 'name';
+        $objWidgetName->mandatory = true;
+        $objWidgetName->rgxp      = 'alpha';
+        $objWidgetName->value     = $this->Input->post('name');
+
+        $this->Template->objWidgetName = $objWidgetName;
+
+        $objWidgetNumber            = new FormTextField();
+        $objWidgetNumber->id        = 'number';
+        $objWidgetNumber->label     = $GLOBALS['TL_LANG']['MSC']['strFormNumber'];
+        $objWidgetNumber->name      = 'number';
+        $objWidgetNumber->mandatory = true;
+        $objWidgetNumber->rgxp      = 'germanNumbers';
+        $objWidgetNumber->value     = $this->Input->post('number');
+
+        $this->Template->objWidgetNumber = $objWidgetNumber;
+
+        $objWidgetCaptcha = new FormCaptcha();
+
+        $this->Template->objWidgetCaptcha = $objWidgetCaptcha;
+
+        $objWidgetSubmit         = new FormSubmit();
+        $objWidgetSubmit->id     = 'submit';
+        $objWidgetSubmit->slabel = $GLOBALS['TL_LANG']['MSC']['strFormSubmit'];
+
+        $this->Template->objWidgetSubmit = $objWidgetSubmit;
+
+        // Get Click2Call configuration 
+        $arrModuleParams = $this->Database->prepare("SELECT * FROM tl_click2call WHERE id=?")->limit(1)->execute($this->foreignKey); 
+
+        $strHost     = $arrModuleParams->host; 
+        $strUser     = $arrModuleParams->user; 
+        $strPassword = $arrModuleParams->password; 
+        $strChannel  = $arrModuleParams->channel; 
+        $intPort     = $arrModuleParams->port;
+        $strContext  = $arrModuleParams->context; 
+        $intWaitTime = $arrModuleParams->wait_time;  
+        $intPriority = $arrModuleParams->priority;
+
+        $strWeekDay = date("D", time());
+        $strStart   = strtolower($strWeekDay)."_start";
+        $strEnd     = strtolower($strWeekDay)."_stop";
+
+        if ($this->Input->post('FORM_SUBMIT') == 'form_click2call_submit') {
+            $boolOfficeIsOpen = false;
+
+            if ($arrModuleParams->show_office_hours == '1') {				
+                $intStartTime = $arrModuleParams->{$strStart};
+                $intEndTime   = $arrModuleParams->{$strEnd};
+
+                ($intStartTime == null) ? $intStartTime                 = '0' : $intStartTime;
+                ($intEndTime == null || $intEndTime == 0) ? $intEndTime = '86340' : $intEndTime;
+
+                $intNow           = strtotime("now") + 3600;				
+                $intStartOfTheDay = strtotime("today");
+                $intDifference    = $intNow - $intStartOfTheDay;
+
+                if (($intDifference  > $intStartTime)  && ($intDifference < $intEndTime)) {
+                        $boolOfficeIsOpen = true;
+                }
+                
+            } else {
+                    $boolOfficeIsOpen = true;
+            }
+
+            if ($boolOfficeIsOpen) {
+                $objWidgetName->validate(); 
+                $objWidgetNumber->validate();
+                $objWidgetCaptcha->validate();
+
+                if (!$objWidgetName->hasErrors() && !$objWidgetNumber->hasErrors() && !$objWidgetCaptcha->hasErrors()) {
+                    // if no error occurs and office is open then initialize callback
+                    $callerName = $this->Input->post('name');
+                    $callNumber = $this->Input->post('number');
+
+                    $callerId = "Web-".$callerName . " <".$callNumber.">";
+
+                    $objSocket = fsockopen($strHost, $intPort, $errnum, $errdesc);
+                    if ($objSocket) {
+                        fputs($objSocket, "Action: login\r\n");
+                        fputs($objSocket, "Events: off\r\n");
+                        fputs($objSocket, "Username: ".$strUser."\r\n");
+                        fputs($objSocket, "Secret: ".$strPassword."\r\n\r\n");
+                        fputs($objSocket, "Action: originate\r\n");
+                        fputs($objSocket, "Channel: ".$strChannel."\r\n");
+                        fputs($objSocket, "WaitTime: ".$intWaitTime."\r\n");
+                        fputs($objSocket, "CallerId: ".$callerId."\r\n");
+                        fputs($objSocket, "Exten: ".$callNumber."\r\n");
+                        fputs($objSocket, "Context: ".$strContext."\r\n");
+                        fputs($objSocket, "Priority: ".$intPriority."\r\n\r\n");
+                        fputs($objSocket, "Action: Logoff\r\n\r\n");
+                        sleep(3);
+                        fclose($objSocket);
+
+                        $this->Template->infoClass   = 'infoBox';
+                        $this->Template->infoMessage = $GLOBALS['TL_LANG']['MSC']['strFormSuccess'];
+                        $this->log('Connection established between "'.$strHost.'" and "'.$callerName . " <".$callNumber.">".'".', 'ModuleClick2Call fsockopen()', TL_GENERAL);	
+                  
+                    } else {
+                        $this->Template->infoClass   = 'errorBox';
+                        $this->Template->infoMessage = sprintf($GLOBALS['TL_LANG']['MSC']['strFormConnection'], $errdesc, $errnum ? '(#'.$errnum.')' : '');	
+                        $this->log(($errdesc && $errnum) ? $errdesc.' by '.$strHost.' (#'.$errnum.')' : 'Connection failed', 'ModuleClick2Call fsockopen()', TL_ERROR);			
+                    }
+                }
+                
+            } else {
+                $this->Template->infoClass   = 'errorBox';
+                $this->Template->infoMessage = $GLOBALS['TL_LANG']['MSC']['strFormOffice'];							 
+            }
+        }
+    }
 }
 
 ?>
