@@ -25,7 +25,7 @@
  * @category  Contao  
  * @package   CallbackSevice                                                                                                                                                                                                                                                                                                                                                                                                               
  * @author    Dennis Sagasser <sagasser@gispack.com>
- * @copyright 2014 Dennis Sagasser                                                                                                                                                                                                      
+ * @copyright 2013-2014 Dennis Sagasser                                                                                                                                                                                                      
  * @license   http://www.gnu.org/licenses/lgpl-3.0.html LGPL
  * @link      https://contao.org                                                                                                                                                                                                                                                                                                                                                                                                                                  
  */
@@ -192,22 +192,20 @@
  */
 
  array_insert($GLOBALS['BE_MOD'], 1, array
-( 
-    'click2call' => array
     ( 
-      'config' => array 
-      ( 
-        	'tables'       => array('tl_click2call'),
-            //'key'          => array('Class', 'method'),
-            //'callback'     => 'ClassName',
-            'icon'         => 'system/themes/default/images/settings.gif',
-            //'stylesheet'   => 'path/to/stylesheet.css',
-            //'javascript'   => 'path/to/javascript.js'
-      ) 
-    ) 
-  ) 
-);
+        'click2call' => array
+        ( 
+          'config' => array 
+          ( 
+                    'tables'       => array('tl_click2call'),
+                //'key'          => array('Class', 'method'),
+                //'callback'     => 'ClassName',
+                'icon'         => 'system/themes/default/images/settings.gif',
+                //'stylesheet'   => 'path/to/stylesheet.css',
+                //'javascript'   => 'path/to/javascript.js'
+          ) 
+        )
+    ));
 
 $GLOBALS['FE_MOD']['application']['click2call_form'] = 'ModuleClick2Call';
-$GLOBALS['TL_HOOKS']['addCustomRegexp'][] = array('HookGermanNumbers', 'addCustomRegexp');
-?>
+$GLOBALS['TL_HOOKS']['addCustomRegexp'][]            = array('HookGermanNumbers', 'addCustomRegexp');
