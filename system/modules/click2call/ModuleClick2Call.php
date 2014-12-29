@@ -28,7 +28,6 @@
  * @filesource
  */
 
-
 /**
  * Class ModuleClick2Call 
  *
